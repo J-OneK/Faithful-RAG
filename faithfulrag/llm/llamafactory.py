@@ -12,7 +12,7 @@ from tenacity import (
     before_sleep_log
 )
 import httpx
-from util import logger
+from ..util import logger
 
 _cached_llamafactory_client: Optional[httpx.AsyncClient] = None
 

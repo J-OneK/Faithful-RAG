@@ -164,12 +164,10 @@ class FaithfulRAG:
         params = {**self.generation_sampling_params, **generation_params}
         
         if generation_type == "normal_cot":
-            params['response_format'] = {"type": "json_object"}
             return await self.self_think_module.predict_answer_normal_cot(
                 dataset, facts, **params
             )
         elif generation_type == "scheduled_cot":
-            params['response_format'] = {"type": "json_object"}
             return await self.self_think_module.predict_answer_scheduled_cot(
                 dataset, facts, **params
             )

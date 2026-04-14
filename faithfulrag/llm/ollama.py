@@ -12,7 +12,7 @@ else:
 
 import httpx
 from tenacity import RetryCallState
-from util import logger
+from ..util import logger
 
 
 @lru_cache(maxsize=1)

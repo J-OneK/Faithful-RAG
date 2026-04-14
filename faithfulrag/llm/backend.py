@@ -4,8 +4,7 @@ import os
 import sys
 from typing import Dict, List, Optional, Callable, Any, Coroutine
 from tqdm.asyncio import tqdm_asyncio
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from util import logger
+from ..util import logger
 
 
 class LLMBackend:

@@ -5,7 +5,7 @@ import asyncio
 import logging
 from functools import lru_cache
 from typing import Dict, List, Optional, Union
-from util import logger
+from ..util import logger
 
 import torch
 from tenacity import (

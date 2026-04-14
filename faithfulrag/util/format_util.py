@@ -4,13 +4,8 @@ import os
 from datasets import load_dataset, Dataset
 import inflect
 import string
-from vllm import LLM, SamplingParams
-import os
-import torch
-import copy
-import math
 import logging
-from typing import Union,List
+from typing import Union, List
 
 class FormatConverter:
 
@@ -81,15 +76,33 @@ class FormatConverter:
     
     @staticmethod
     def extract_answer(prediction):
+        # 先尝试去掉 markdown 代码块包裹
+        clean = prediction.strip()
+        if clean.startswith("```"):
+            # 去掉首行(```json 或 ```)和末尾的 ```
+            lines = clean.split('\n')
+            # 去掉第一行和最后一行
+            inner_lines = lines[1:] if len(lines) > 1 else lines
+            if inner_lines and inner_lines[-1].strip() == '```':
+                inner_lines = inner_lines[:-1]
+            clean = '\n'.join(inner_lines).strip()
         try:
-            data = json.loads(prediction)
+            data = json.loads(clean)
             answer_key = next((key for key in data if "answer" in key.lower()), None)
             if answer_key:
                 answer = data[answer_key]
-                return answer
+                return str(answer)
             else:
                 print("JSON does not contain an 'answer' field. Returning the original prediction.")
                 return prediction
         except json.JSONDecodeError:
+            # 尝试用正则直接提取 "Answer": "..." 或 "answer": "..."
+            import re
+            m = re.search(r'"[Aa]nswer"\s*:\s*"([^"]+)"', clean)
+            if m:
+                return m.group(1)
+            m = re.search(r'"[Aa]nswer"\s*:\s*([^\n,}]+)', clean)
+            if m:
+                return m.group(1).strip().strip('"')
             print("The string is not a valid JSON format. Returning the original prediction.")
             return prediction
